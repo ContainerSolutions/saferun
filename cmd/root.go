@@ -21,6 +21,7 @@ import (
 
 	"github.com/spf13/cobra"
 
+	"github.com/gusfcarvalho/saferun/pkg/exec"
 	"github.com/spf13/viper"
 )
 
@@ -34,9 +35,9 @@ var rootCmd = &cobra.Command{
 	        - saferun env
 			- saferun -c "flask run"
 			- saferun -c "binary"`,
-	// Uncomment the following line if your bare application
-	// has an action associated with it:
-	// Run: func(cmd *cobra.Command, args []string) { },
+	Run: func(cmd *cobra.Command, args []string) {
+		exec.Run(command)
+	},
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.

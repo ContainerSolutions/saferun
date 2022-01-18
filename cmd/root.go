@@ -21,7 +21,6 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/gusfcarvalho/saferun/pkg/exec"
 	"github.com/spf13/viper"
 )
 
@@ -35,9 +34,8 @@ var rootCmd = &cobra.Command{
 	        - saferun run env
 			- saferun run -c "flask run"
 			- saferun run -c "binary"`,
-	Run: func(cmd *cobra.Command, args []string) {
-		exec.Run(command)
-	},
+	//Run: func(cmd *cobra.Command, args []string) {
+	//	},
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
@@ -54,7 +52,6 @@ func init() {
 	// will be global for your application.
 
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.saferun.yaml)")
-	rootCmd.Flags().StringVarP(&command, "command", "c", "", "command to run")
 
 }
 

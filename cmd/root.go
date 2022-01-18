@@ -53,7 +53,7 @@ func init() {
 	// will be global for your application.
 
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.saferun.yaml)")
-	rootCmd.Flags().StringVar(&command, "env", "", "command to run")
+	rootCmd.Flags().StringVarP(&command, "command", "c", "", "command to run")
 
 }
 

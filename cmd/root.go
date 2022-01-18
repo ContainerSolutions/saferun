@@ -32,9 +32,9 @@ var rootCmd = &cobra.Command{
 	Use:   "saferun",
 	Short: "A command to run applications on encrypted environments",
 	Long: `Usage:
-	        - saferun env
-			- saferun -c "flask run"
-			- saferun -c "binary"`,
+	        - saferun run env
+			- saferun run -c "flask run"
+			- saferun run -c "binary"`,
 	Run: func(cmd *cobra.Command, args []string) {
 		exec.Run(command)
 	},

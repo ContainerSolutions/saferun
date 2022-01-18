@@ -15,7 +15,7 @@ limitations under the License.
 */
 package main
 
-import "saferun/cmd"
+import "github.com/gusfcarvalho/saferun/cmd"
 
 func main() {
 	cmd.Execute()

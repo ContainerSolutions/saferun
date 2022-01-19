@@ -13,27 +13,18 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
-	"os/exec"
 	"regexp"
 	"strings"
+	"syscall"
 )
 
 func Run(command []string, detached bool, enc bool, privateKeyPath string) {
-	cmd := exec.Command(command[0], command[1:]...)
 	fmt.Println("Running command ", command)
-	cmd.Env = MutateEnv(os.Environ(), enc, privateKeyPath)
-	if detached {
-		err := cmd.Start()
-		if err != nil {
-			panic(err)
-		}
-		return
-	}
-	out, err := cmd.Output()
+	env := MutateEnv(os.Environ(), enc, privateKeyPath)
+	err := syscall.Exec(command[0], command, env)
 	if err != nil {
 		panic(err)
 	}
-	fmt.Println(string(out))
 }
 
 func Encrypt(plaintext string, publicKeyPath string) string {

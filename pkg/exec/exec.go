@@ -34,7 +34,11 @@ func Encrypt(plaintext string, publicKeyPath string) string {
 
 func Decrypt(plaintext string, privateKeyPath string) string {
 	privKey := ReadPrivateKeyFromFile(privateKeyPath)
-	return DecryptRSA(plaintext, privKey)
+	text, err := DecryptRSA(plaintext, privKey)
+	if err != nil {
+		panic(err)
+	}
+	return text
 }
 
 func ReadPublicKeyFromFile(keyPath string) *rsa.PublicKey {
@@ -101,16 +105,16 @@ func EncryptRSA(message string, publicKey *rsa.PublicKey) string {
 	return hex.EncodeToString(encryptedBytes)
 }
 
-func DecryptRSA(message string, privateKey *rsa.PrivateKey) string {
+func DecryptRSA(message string, privateKey *rsa.PrivateKey) (string, error) {
 	messageBytes, err := hex.DecodeString(message)
 	if err != nil {
-		panic(err)
+		return "", err
 	}
 	decryptedBytes, err := privateKey.Decrypt(nil, messageBytes, &rsa.OAEPOptions{Hash: crypto.SHA256})
 	if err != nil {
-		panic(err)
+		return "", err
 	}
-	return string(decryptedBytes)
+	return string(decryptedBytes), nil
 }
 
 func MutateEnv(env []string, onlyEncrypted bool, privateKeyPath string) []string {
@@ -118,11 +122,18 @@ func MutateEnv(env []string, onlyEncrypted bool, privateKeyPath string) []string
 	re := regexp.MustCompile(`SAFE_RUN_.*=.*`)
 	privKey := ReadPrivateKeyFromFile(privateKeyPath)
 	var nv string
+	var err error
 	for _, v := range env {
 		if re.MatchString(v) {
 			kv := strings.Split(v, "=")
 			kv[0] = strings.Replace(kv[0], "SAFE_RUN_", "", 1)
-			kv[1] = env_decrypt(kv[1], privKey)
+			kv[1], err = env_decrypt(kv[1], privKey)
+			if err != nil { // Error decrypting, we just add the variable as is (different key probably)
+				if !onlyEncrypted {
+					ans = append(ans, v)
+				}
+				continue
+			}
 			nv = strings.Join(kv, "=")
 			ans = append(ans, nv)
 		} else {
@@ -133,9 +144,9 @@ func MutateEnv(env []string, onlyEncrypted bool, privateKeyPath string) []string
 	}
 	return ans
 }
-func env_decrypt(text string, privKey *rsa.PrivateKey) string {
-	plaintext := DecryptRSA(text, privKey)
-	return plaintext
+func env_decrypt(text string, privKey *rsa.PrivateKey) (string, error) {
+	plaintext, err := DecryptRSA(text, privKey)
+	return plaintext, err
 }
 
 func PKCS5Padding(ciphertext []byte, blockSize int, after int) []byte {

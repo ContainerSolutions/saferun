@@ -33,8 +33,12 @@ Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
+		privKey, err := cmd.Flags().GetString("private-key")
+		if err != nil {
+			panic(err)
+		}
 		for _, v := range args {
-			enc := exec.Decrypt(v)
+			enc := exec.Decrypt(v, privKey)
 			fmt.Println(enc)
 		}
 	},
@@ -42,6 +46,8 @@ to quickly create a Cobra application.`,
 
 func init() {
 	rootCmd.AddCommand(decryptCmd)
+	decryptCmd.Flags().String("private-key", "", "Private Key file location")
+	decryptCmd.Flags().String("public-key", "", "Public Key file location")
 
 	// Here you will define your flags and configuration settings.
 

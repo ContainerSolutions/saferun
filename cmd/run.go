@@ -20,7 +20,8 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var detach bool
+var detach, all bool
+var privateKeyPath, publicKeyPath string
 
 // runCmd represents the run command
 var runCmd = &cobra.Command{
@@ -33,13 +34,20 @@ Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		exec.Run(args, detach)
+		privKey, err := cmd.Flags().GetString("private-key")
+		if err != nil {
+			panic(err)
+		}
+		exec.Run(args, detach, all, privKey)
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(runCmd)
 	runCmd.Flags().BoolVarP(&detach, "detached", "d", false, "Run in detached mode")
+	runCmd.Flags().BoolVar(&all, "only-encrypted", false, "Loads only encrypted environment variables")
+	runCmd.Flags().String("private-key", "", "Private Key file location")
+	runCmd.Flags().String("public-key", "", "Public Key file location")
 	// Here you will define your flags and configuration settings.
 
 	// Cobra supports Persistent Flags which will work for this command

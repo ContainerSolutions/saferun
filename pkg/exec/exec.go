@@ -32,6 +32,11 @@ func Encrypt(plaintext string, publicKeyPath string) string {
 	return EncryptRSA(plaintext, pubKey)
 }
 
+func EncryptFromBytes(plaintext string, publicKey []byte) string {
+	pubKey := ReadPublicKeyFromBytes(publicKey)
+	return EncryptRSA(plaintext, pubKey)
+}
+
 func Decrypt(plaintext string, privateKeyPath string) string {
 	privKey := ReadPrivateKeyFromFile(privateKeyPath)
 	text, err := DecryptRSA(plaintext, privKey)
@@ -41,11 +46,7 @@ func Decrypt(plaintext string, privateKeyPath string) string {
 	return text
 }
 
-func ReadPublicKeyFromFile(keyPath string) *rsa.PublicKey {
-	pub, err := ioutil.ReadFile(keyPath)
-	if err != nil {
-		panic(err)
-	}
+func ReadPublicKeyFromBytes(pub []byte) *rsa.PublicKey {
 	pubPem, _ := pem.Decode(pub)
 	if pubPem == nil {
 		panic(errors.New("rsa public key not in pem format"))
@@ -63,6 +64,14 @@ func ReadPublicKeyFromFile(keyPath string) *rsa.PublicKey {
 		panic("Cannot parse publicKey")
 	}
 	return pubKey
+}
+
+func ReadPublicKeyFromFile(keyPath string) *rsa.PublicKey {
+	pub, err := ioutil.ReadFile(keyPath)
+	if err != nil {
+		panic(err)
+	}
+	return ReadPublicKeyFromBytes(pub)
 }
 
 func ReadPrivateKeyFromFile(keyPath string) *rsa.PrivateKey {

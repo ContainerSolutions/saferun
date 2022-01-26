@@ -1,4 +1,4 @@
-module github.com/gusfcarvalho/saferun
+module github.com/ContainerSolutions/saferun
 
 go 1.17
 

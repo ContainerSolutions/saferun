@@ -18,7 +18,7 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/gusfcarvalho/saferun/pkg/exec"
+	"github.com/ContainerSolutions/saferun/pkg/exec"
 	"github.com/spf13/cobra"
 )
 

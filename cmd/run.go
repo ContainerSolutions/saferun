@@ -16,7 +16,7 @@ limitations under the License.
 package cmd
 
 import (
-	"github.com/gusfcarvalho/saferun/pkg/exec"
+	"github.com/ContainerSolutions/saferun/pkg/exec"
 	"github.com/spf13/cobra"
 )
 
